@@ -167,9 +167,7 @@ class ProductView(ViewSet):
         direction = request.query_params.get('direction', None)
 
         if number_sold:
-            products = products.annotate(
-                order_count=Count('orders')
-            ).filter(order_count__lt=number_sold)
+            products = products.annotate(order_count=Count('orders')).filter(order_count__gte=number_sold)
 
         if order is not None:
             order_filter = f'-{order}' if direction == 'desc' else order
