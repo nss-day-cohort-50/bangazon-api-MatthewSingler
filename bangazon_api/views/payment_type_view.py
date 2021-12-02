@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from bangazon_api.models import PaymentType
+from django.contrib.auth.models import User
 from bangazon_api.serializers import (
     PaymentTypeSerializer, MessageSerializer, CreatePaymentType)
 
@@ -40,8 +41,8 @@ class PaymentTypeView(ViewSet):
         try:
             payment_type = PaymentType.objects.create(
                 customer=request.auth.user,
-                merchant_name=request.data['acctNumber'],
-                acct_number=request.data['merchant']
+                merchant_name=request.data['merchant'],
+                acct_number=request.data['acctNumber']
             )
             serializer = PaymentTypeSerializer(payment_type)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -51,7 +52,7 @@ class PaymentTypeView(ViewSet):
     @swagger_auto_schema(
         responses={
             204: openapi.Response(
-                description="No content, payment type deleted successfully",
+                description="No content",
             ),
             404: openapi.Response(
                 description="Payment type not found",
