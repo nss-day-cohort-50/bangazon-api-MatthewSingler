@@ -165,6 +165,8 @@ class ProductView(ViewSet):
         category = request.query_params.get('category', None)
         order = request.query_params.get('order_by', None)
         direction = request.query_params.get('direction', None)
+        location = request.query_params.get('location', None)
+        
 
         if number_sold:
             products = products.annotate(order_count=Count('orders')).filter(order_count__gte=number_sold)
@@ -175,6 +177,9 @@ class ProductView(ViewSet):
 
         if category is not None:
             products = products.filter(category__id=category)
+            
+        if location is not None:
+            products = products.filter(location__contains=location)
 
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
